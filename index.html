@@ -13,33 +13,60 @@
         .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #0f172a; padding: 15px; border-radius: 10px; }
         .param-item { display: flex; flex-direction: column; gap: 5px; }
         label { font-size: 12px; color: #94a3b8; font-weight: bold; }
-        input { background: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 5px; font-size: 14px; width: 85%; transition: 0.3s; }
-        input:focus { border-color: var(--primary); outline: none; background: #263449; }
+        input { background: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 5px; font-size: 14px; width: 85%; }
         
-        .signal-box { background: #0f172a; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; border: 2px dashed #334155; }
+        .signal-box { background: #0f172a; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; border: 2px dashed #334155; transition: 0.5s; }
         #signalText { font-size: 22px; font-weight: bold; color: #94a3b8; }
-        .signal-call { color: var(--success) !important; border-color: var(--success) !important; }
-        .signal-put { color: var(--danger) !important; border-color: var(--danger) !important; }
+        .signal-call { color: var(--success) !important; border-color: var(--success) !important; box-shadow: 0 0 15px rgba(34, 197, 94, 0.2); }
+        .signal-put { color: var(--danger) !important; border-color: var(--danger) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
 
-        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); font-size: 16px; margin-bottom: 10px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0f172a; border-radius: 8px; overflow: hidden; display: none; }
-        th, td { border: 1px solid #334155; padding: 12px; text-align: center; font-size: 13px; }
-        th { background: #334155; color: #94a3b8; }
-        .strong-buy { color: #22c55e; font-weight: bold; }
-        .buy { color: #4ade80; }
-        .wait { color: #fbbf24; }
-        .no-buy { color: #f87171; }
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Smart Verifier System</h2>
-    <div class="subtitle">Enter Values to Get Automatic Signal</div>
+    <div class="subtitle">Enter PCR & RSI for Automatic Signal</div>
     
     <div class="params-grid">
-        <div class="param-item"><label>Delta</label><input type="number" id="delta" placeholder="0.50"></div>
-        <div class="param-item"><label>PCR (Put-Call Ratio)</label><input type="number" id="pcr" step="0.01" placeholder="1.2"></div>
-        <div class="param-item"><label>RSI</label><input type="number" id="rsi" placeholder="60"></div>
-        <div class="param-item"><label>IV</label><input type="number" id="iv" placeholder="15"></div>
+        <div class="param-item"><label>PCR (Put-Call Ratio)</label><input type="number" id="pcr" step="0.01" placeholder="e.g. 1.25"></div>
+        <div class="param-item"><label>RSI Value</label><input type="number" id="rsi" placeholder="e.g. 65"></div>
+        <div class="param-item"><label>Delta</label><input type="number" placeholder="0.50"></div>
+        <div class="param-item"><label>VIX</label><input type="number" placeholder="12.5"></div>
+    </div>
+
+    <div class="signal-box" id="signalDisplay">
+        <div id="signalText">WAITING FOR DATA...</div>
+    </div>
+
+    <button onclick="checkSignal()">CHECK SIGNAL</button>
+</div>
+
+<script>
+    function checkSignal() {
+        const pcr = parseFloat(document.getElementById('pcr').value);
+        const rsi = parseFloat(document.getElementById('rsi').value);
+        const signalText = document.getElementById('signalText');
+        const signalDisplay = document.getElementById('signalDisplay');
+
+        if (isNaN(pcr) || isNaN(rsi)) {
+            alert("Please enter PCR and RSI values!");
+            return;
+        }
+
+        // Logic for Signal
+        if (pcr >= 1.1 && rsi >= 55) {
+            signalText.innerText = "BUY CALL (Bullish)";
+            signalDisplay.className = "signal-box signal-call";
+        } else if (pcr <= 0.9 && rsi <= 45) {
+            signalText.innerText = "BUY PUT (Bearish)";
+            signalDisplay.className = "signal-box signal-put";
+        } else {
+            signalText.innerText = "NO SIGNAL (Wait)";
+            signalDisplay.className = "signal-box";
+        }
+    }
+</script>
+</body>
+</html>
