@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trading Verification App</title>
+    <title>Advance Trading Verifier</title>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #3b82f6; --success: #22c55e; --danger: #ef4444; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; justify-content: center; }
-        .container { width: 100%; max-width: 500px; background: var(--card); padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 500px; background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        h2 { text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 20px; font-size: 14px; }
         .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
-        .btn-tezi { background: var(--primary); }
-        .btn-mandi { background: #334155; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; background: #334155; }
         .active-tezi { background: var(--success) !important; }
         .active-mandi { background: var(--danger) !important; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; display: none; background: #0f172a; border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid #334155; padding: 12px; text-align: center; font-size: 14px; }
+        .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; background: #0f172a; padding: 15px; border-radius: 10px; }
+        .param-item { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0f172a; border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #334155; padding: 10px; text-align: center; font-size: 13px; }
         th { background: #334155; color: #94a3b8; }
-        .buy { color: #4ade80; font-weight: bold; }
-        .strong-buy { color: #22c55e; font-weight: bold; text-transform: uppercase; }
+        .strong-buy { color: #22c55e; font-weight: bold; }
+        .buy { color: #4ade80; }
         .wait { color: #fbbf24; }
         .no-buy { color: #f87171; }
     </style>
@@ -27,56 +30,59 @@
 
 <div class="container">
     <h2>Verification System App</h2>
-    <p style="color: #94a3b8;">15-Min Intraday Strategy</p>
+    <div class="subtitle">15-Min Intraday Strategy Parameters</div>
     
-    <div class="btn-group">
-        <button id="teziBtn" class="btn-tezi" onclick="showTable('tezi')">Tezi (Call Buy)</button>
-        <button id="mandiBtn" class="btn-mandi" onclick="showTable('mandi')">Mandi (Put Buy)</button>
+    <div class="params-grid">
+        <div class="param-item"><input type="checkbox"> Delta</div>
+        <div class="param-item"><input type="checkbox"> Gamma</div>
+        <div class="param-item"><input type="checkbox"> Theta</div>
+        <div class="param-item"><input type="checkbox"> Vega</div>
+        <div class="param-item"><input type="checkbox"> IV</div>
+        <div class="param-item"><input type="checkbox"> OI (Open Interest)</div>
+        <div class="param-item"><input type="checkbox"> VIX</div>
+        <div class="param-item"><input type="checkbox"> PCR</div>
+        <div class="param-item"><input type="checkbox"> RSI</div>
+        <div class="param-item"><input type="checkbox"> Option Price</div>
     </div>
 
-    <table id="teziTable">
-        <tr><th>Value Range</th><th>Action</th><th>Win %</th></tr>
-        <tr><td>95 - 100</td><td class="strong-buy">Strong Buy</td><td>100%</td></tr>
-        <tr><td>90 - 94</td><td class="strong-buy">Strong Buy</td><td>99%</td></tr>
-        <tr><td>80 - 89</td><td class="buy">Buy</td><td>95%</td></tr>
-        <tr><td>70 - 79</td><td class="buy">Buy</td><td>85%</td></tr>
-        <tr><td>60 - 69</td><td class="wait">Wait</td><td>70%</td></tr>
-        <tr><td>50 - 59</td><td class="wait">Wait</td><td>50%</td></tr>
-        <tr><td>Below 50</td><td class="no-buy">No Buy</td><td>10%</td></tr>
-    </table>
+    <div class="btn-group">
+        <button id="teziBtn" onclick="toggle('tezi')">Tezi (Call Buy)</button>
+        <button id="mandiBtn" onclick="toggle('mandi')">Mandi (Put Buy)</button>
+    </div>
 
-    <table id="mandiTable">
-        <tr><th>Value Range</th><th>Action</th><th>Win %</th></tr>
-        <tr><td>95 - 100</td><td class="strong-buy">Strong Buy</td><td>100%</td></tr>
-        <tr><td>90 - 94</td><td class="strong-buy">Strong Buy</td><td>99%</td></tr>
-        <tr><td>80 - 89</td><td class="buy">Buy</td><td>95%</td></tr>
-        <tr><td>70 - 79</td><td class="buy">Buy</td><td>85%</td></tr>
-        <tr><td>60 - 69</td><td class="wait">Wait</td><td>70%</td></tr>
-        <tr><td>50 - 59</td><td class="wait">Wait</td><td>50%</td></tr>
-        <tr><td>Below 50</td><td class="no-buy">No Buy</td><td>10%</td></tr>
+    <table id="dataTable" style="display:none;">
+        <thead><tr><th>Value Range</th><th>Action</th><th>Win %</th></tr></thead>
+        <tbody id="tableBody"></tbody>
     </table>
 </div>
 
 <script>
-    function showTable(type) {
-        const tTable = document.getElementById('teziTable');
-        const mTable = document.getElementById('mandiTable');
+    const data = [
+        { range: "95 - 100", action: "STRONG BUY", win: "100%", class: "strong-buy" },
+        { range: "90 - 94", action: "STRONG BUY", win: "99%", class: "strong-buy" },
+        { range: "80 - 89", action: "BUY", win: "95%", class: "buy" },
+        { range: "70 - 79", action: "BUY", win: "85%", class: "buy" },
+        { range: "60 - 69", action: "WAIT", win: "70%", class: "wait" },
+        { range: "50 - 59", action: "WAIT", win: "50%", class: "wait" },
+        { range: "Below 50", action: "NO BUY", win: "10%", class: "no-buy" }
+    ];
+
+    function toggle(type) {
+        const table = document.getElementById('dataTable');
+        const body = document.getElementById('tableBody');
         const tBtn = document.getElementById('teziBtn');
         const mBtn = document.getElementById('mandiBtn');
+        
+        table.style.display = 'table';
+        body.innerHTML = '';
+        
+        data.forEach(row => {
+            body.innerHTML += `<tr><td>${row.range}</td><td class="${row.class}">${row.action}</td><td>${row.win}</td></tr>`;
+        });
 
         if(type === 'tezi') {
-            tTable.style.display = 'table';
-            mTable.style.display = 'none';
-            tBtn.classList.add('active-tezi');
-            mBtn.classList.remove('active-mandi');
+            tBtn.className = 'active-tezi';
+            mBtn.className = '';
         } else {
-            mTable.style.display = 'table';
-            tTable.style.display = 'none';
-            mBtn.classList.add('active-mandi');
-            tBtn.classList.remove('active-tezi');
-        }
-    }
-</script>
-
-</body>
-</html>
+            mBtn.className = 'active-mandi';
+            tBtn.
