@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advance Trading Verifier</title>
+    <title>Smart Trading Signal App</title>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --primary: #3b82f6; --success: #22c55e; --danger: #ef4444; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; justify-content: center; }
@@ -12,12 +12,17 @@
         .subtitle { text-align: center; color: #94a3b8; margin-bottom: 20px; font-size: 13px; }
         .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #0f172a; padding: 15px; border-radius: 10px; }
         .param-item { display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 12px; color: #94a3b8; }
-        input { background: #1e293b; border: 1px solid #334155; color: white; padding: 8px; border-radius: 5px; font-size: 14px; width: 80%; }
-        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; background: #334155; }
-        .active-tezi { background: var(--success) !important; box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
-        .active-mandi { background: var(--danger) !important; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        label { font-size: 12px; color: #94a3b8; font-weight: bold; }
+        input { background: #1e293b; border: 1px solid #334155; color: white; padding: 10px; border-radius: 5px; font-size: 14px; width: 85%; transition: 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; background: #263449; }
+        
+        .signal-box { background: #0f172a; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px; border: 2px dashed #334155; }
+        #signalText { font-size: 22px; font-weight: bold; color: #94a3b8; }
+        .signal-call { color: var(--success) !important; border-color: var(--success) !important; }
+        .signal-put { color: var(--danger) !important; border-color: var(--danger) !important; }
+
+        button { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; background: var(--primary); font-size: 16px; margin-bottom: 10px; }
+        
         table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #0f172a; border-radius: 8px; overflow: hidden; display: none; }
         th, td { border: 1px solid #334155; padding: 12px; text-align: center; font-size: 13px; }
         th { background: #334155; color: #94a3b8; }
@@ -30,55 +35,11 @@
 <body>
 
 <div class="container">
-    <h2>Verification System App</h2>
-    <div class="subtitle">Enter Parameters & Select Strategy</div>
+    <h2>Smart Verifier System</h2>
+    <div class="subtitle">Enter Values to Get Automatic Signal</div>
     
     <div class="params-grid">
-        <div class="param-item"><label>Delta</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>Gamma</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>Theta</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>Vega</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>IV</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>OI</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>VIX</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>PCR</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>RSI</label><input type="number" placeholder="Value"></div>
-        <div class="param-item"><label>Price</label><input type="number" placeholder="Value"></div>
-    </div>
-
-    <div class="btn-group">
-        <button id="teziBtn" onclick="showTable('tezi')">Tezi (Call Buy)</button>
-        <button id="mandiBtn" onclick="showTable('mandi')">Mandi (Put Buy)</button>
-    </div>
-
-    <table id="resultTable">
-        <thead><tr><th>Value Range</th><th>Action</th><th>Win %</th></tr></thead>
-        <tbody>
-            <tr><td>95 - 100</td><td class="strong-buy">STRONG BUY</td><td>100%</td></tr>
-            <tr><td>90 - 94</td><td class="strong-buy">STRONG BUY</td><td>99%</td></tr>
-            <tr><td>80 - 89</td><td class="buy">BUY</td><td>95%</td></tr>
-            <tr><td>70 - 79</td><td class="buy">BUY</td><td>85%</td></tr>
-            <tr><td>60 - 69</td><td class="wait">WAIT</td><td>70%</td></tr>
-            <tr><td>50 - 59</td><td class="wait">WAIT</td><td>50%</td></tr>
-            <tr><td>Below 50</td><td class="no-buy">NO BUY</td><td>10%</td></tr>
-        </tbody>
-    </table>
-</div>
-
-<script>
-    function showTable(type) {
-        document.getElementById('resultTable').style.display = 'table';
-        const tBtn = document.getElementById('teziBtn');
-        const mBtn = document.getElementById('mandiBtn');
-
-        if(type === 'tezi') {
-            tBtn.className = 'active-tezi';
-            mBtn.className = '';
-        } else {
-            mBtn.className = 'active-mandi';
-            tBtn.className = '';
-        }
-    }
-</script>
-</body>
-</html>
+        <div class="param-item"><label>Delta</label><input type="number" id="delta" placeholder="0.50"></div>
+        <div class="param-item"><label>PCR (Put-Call Ratio)</label><input type="number" id="pcr" step="0.01" placeholder="1.2"></div>
+        <div class="param-item"><label>RSI</label><input type="number" id="rsi" placeholder="60"></div>
+        <div class="param-item"><label>IV</label><input type="number" id="iv" placeholder="15"></div>
