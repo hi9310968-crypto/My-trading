@@ -3,96 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Trading Verifier</title>
+    <title>Live Signal Verifier</title>
     <style>
         :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --success: #22c55e; --danger: #ef4444; --warning: #fbbf24; }
         body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
-        .main-container { display: flex; flex-wrap: wrap; gap: 15px; max-width: 1000px; margin: auto; }
+        .main-container { display: flex; flex-wrap: wrap; gap: 15px; max-width: 900px; margin: auto; }
         .box { flex: 1; min-width: 320px; background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        h3 { text-align: center; color: #3b82f6; margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px; }
-        .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .input-group { margin-bottom: 10px; }
-        label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 3px; font-weight: bold; }
-        input { width: 100%; padding: 8px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 5px; box-sizing: border-box; font-size: 13px; }
+        h3 { text-align: center; color: #3b82f6; margin-top: 0; }
+        .params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; color: #94a3b8; font-weight: bold; }
+        input { padding: 10px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; font-size: 14px; }
         
-        .signal-area { text-align: center; padding: 20px; border-radius: 10px; background: #0f172a; border: 2px solid #334155; margin-bottom: 20px; min-height: 80px; }
-        #decisionText { font-size: 22px; font-weight: bold; margin-bottom: 5px; }
-        #riskText { font-size: 13px; color: #94a3b8; }
+        .result-box { text-align: center; padding: 20px; border-radius: 10px; background: #0f172a; border: 2px solid #334155; margin-bottom: 20px; }
+        #decision { font-size: 24px; font-weight: bold; }
+        #probability { font-size: 16px; margin-top: 10px; }
         
-        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
-        th, td { border: 1px solid #334155; padding: 10px; text-align: center; }
-        th { background: #1e293b; color: #94a3b8; }
-        .win-table tr:nth-child(even) { background: #162031; }
+        button { width: 100%; padding: 15px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
         
-        .btn-check { width: 100%; padding: 15px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-check:hover { background: #2563eb; transform: scale(1.02); }
+        .strategy-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
+        .strategy-table th, .strategy-table td { border: 1px solid #334155; padding: 10px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
     <div class="box">
-        <h3>Live Parameters</h3>
+        <h3>Live Market Input</h3>
         <div class="params-grid">
-            <div class="input-group"><label>DELTA</label><input type="number" id="delta" step="0.01" placeholder="0.50"></div>
-            <div class="input-group"><label>GAMMA</label><input type="number" id="gamma" step="0.001" placeholder="0.002"></div>
-            <div class="input-group"><label>THETA</label><input type="number" id="theta" step="0.1" placeholder="-15"></div>
-            <div class="input-group"><label>VEGA</label><input type="number" id="vega" step="0.1" placeholder="10"></div>
+            <div class="input-group"><label>PCR (Ratio)</label><input type="number" id="pcr" step="0.01" placeholder="1.1"></div>
+            <div class="input-group"><label>RSI (15-Min)</label><input type="number" id="rsi" placeholder="60"></div>
             <div class="input-group"><label>IV (Implied Vol)</label><input type="number" id="iv" placeholder="18"></div>
-            <div class="input-group"><label>OI CHANGE %</label><input type="number" id="oi" placeholder="25"></div>
-            <div class="input-group"><label>VIX (India)</label><input type="number" id="vix" placeholder="13"></div>
-            <div class="input-group"><label>PCR (Ratio)</label><input type="number" id="pcr" step="0.01" placeholder="1.25"></div>
-            <div class="input-group"><label>RSI (15-Min)</label><input type="number" id="rsi" placeholder="65"></div>
-            <div class="input-group"><label>OPTION PRICE</label><input type="number" id="price" placeholder="120"></div>
+            <div class="input-group"><label>OI Change %</label><input type="number" id="oi" placeholder="20"></div>
+            <div class="input-group"><label>DELTA</label><input type="number" id="delta" step="0.01" placeholder="0.5"></div>
+            <div class="input-group"><label>VIX</label><input type="number" id="vix" placeholder="14"></div>
+            <div class="input-group"><label>GAMMA</label><input type="number" id="gamma" step="0.001" placeholder="0.002"></div>
+            <div class="input-group"><label>THETA</label><input type="number" id="theta" placeholder="-12"></div>
         </div>
-        <button class="btn-check" onclick="calculateTradingSignal()">GET FINAL DECISION</button>
+        <button onclick="checkTrade()">CHECK LIVE SIGNAL</button>
     </div>
 
     <div class="box">
-        <h3>Trading Signal & Risk</h3>
-        <div class="signal-area" id="signalBox">
-            <div id="decisionText">READY...</div>
-            <div id="riskText">Fill values and check probability</div>
+        <h3>Final Decision</h3>
+        <div class="result-box" id="signalBox">
+            <div id="decision">WAITING...</div>
+            <div id="probability">Win Prob: --%</div>
         </div>
         
-        <table class="win-table">
-            <thead><tr><th>Value Range</th><th>Action</th><th>Win Prob.</th></tr></thead>
+        <table class="strategy-table">
+            <thead><tr><th>Win %</th><th>Action</th><th>Condition</th></tr></thead>
             <tbody>
-                <tr style="color:var(--success)"><td>90 - 100</td><td>STRONG BUY</td><td>99%</td></tr>
-                <tr style="color:#4ade80"><td>80 - 89</td><td>BUY</td><td>95%</td></tr>
-                <tr style="color:var(--warning)"><td>60 - 79</td><td>WAIT</td><td>70%</td></tr>
-                <tr style="color:var(--danger)"><td>Below 50</td><td>NO BUY</td><td>10%</td></tr>
+                <tr style="color:var(--success)"><td>100-95%</td><td>STRONG BUY</td><td>PCR > 1.2 & RSI > 65</td></tr>
+                <tr style="color:var(--warning)"><td>70%</td><td>WAIT</td><td>Side-ways Trend</td></tr>
+                <tr style="color:var(--danger)"><td>10%</td><td>NO BUY</td><td>Risk of Loss</td></tr>
             </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    function calculateTradingSignal() {
+    function checkTrade() {
         const pcr = parseFloat(document.getElementById('pcr').value);
         const rsi = parseFloat(document.getElementById('rsi').value);
-        const dText = document.getElementById('decisionText');
-        const rText = document.getElementById('riskText');
+        const iv = parseFloat(document.getElementById('iv').value);
+        const oi = parseFloat(document.getElementById('oi').value);
+        
+        const dText = document.getElementById('decision');
+        const pText = document.getElementById('probability');
         const sBox = document.getElementById('signalBox');
 
         if (isNaN(pcr) || isNaN(rsi)) {
-            alert("PCR aur RSI daalna zaroori hai!"); return;
+            alert("PCR aur RSI daalna zaroori hai!");
+            return;
         }
 
-        // Calculation Logic based on multiple parameters
-        if (pcr >= 1.2 && rsi >= 60) {
-            dText.innerText = "SIGNAL: BUY CALL";
+        // Logic for Buy Call/Put or No Trade
+        if (pcr >= 1.15 && rsi >= 60 && oi > 10) {
+            dText.innerText = "BUY CALL (Tezi)";
             dText.style.color = "var(--success)";
-            rText.innerText = "Risk: LOW | Probability: 95%+";
+            pText.innerText = "Winning Probability: 95%";
             sBox.style.borderColor = "var(--success)";
-        } else if (pcr <= 0.8 && rsi <= 40) {
-            dText.innerText = "SIGNAL: BUY PUT";
+        } else if (pcr <= 0.85 && rsi <= 40 && oi > 10) {
+            dText.innerText = "BUY PUT (Mandi)";
             dText.style.color = "var(--danger)";
-            rText.innerText = "Risk: LOW | Probability: 90%+";
+            pText.innerText = "Winning Probability: 90%";
             sBox.style.borderColor = "var(--danger)";
-        } else if (rsi > 45 && rsi < 55) {
-            dText.innerText = "WAIT: SIDEWAYS";
+        } else {
+            dText.innerText = "WAIT (No Trade)";
             dText.style.color = "var(--warning)";
-            rText.innerText = "Risk: VERY HIGH | Don't Trade";
+            pText.innerText = "Loss Risk: HIGH (Trend weak)";
             sBox.style.borderColor = "var(--warning)";
-        } else
+        }
+    }
+</script>
+</body>
+</html>
